@@ -1,4 +1,4 @@
-# Purva.ai - Property Intelligence Platform
+# PropertyIntel - Property Intelligence Platform
 
 A modern Vue.js frontend with FastAPI backend for professional property intelligence and portfolio management.
 
@@ -6,17 +6,13 @@ A modern Vue.js frontend with FastAPI backend for professional property intellig
 
 ```
 PropertyIntel/
-├── frontend/               # Vue.js Frontend
-│   ├── src/
-│   │   ├── components/     # Reusable components
-│   │   ├── views/          # Page components
-│   │   ├── stores/         # Pinia state management
-│   │   ├── services/       # API services
-│   │   ├── types/          # TypeScript types
-│   │   └── assets/         # Static assets
-│   ├── package.json
-│   ├── vite.config.ts
-│   └── tailwind.config.js
+├── src/                    # Vue.js Frontend Source
+│   ├── components/         # Reusable components
+│   ├── views/              # Page components
+│   ├── stores/             # Pinia state management
+│   ├── services/           # API services
+│   ├── types/              # TypeScript types
+│   └── assets/             # Static assets
 ├── backend/                # FastAPI Backend
 │   ├── main.py            # FastAPI application
 │   ├── models.py          # Database models
@@ -24,6 +20,9 @@ PropertyIntel/
 │   ├── database.py        # Database configuration
 │   ├── auth.py            # Authentication logic
 │   └── requirements.txt   # Python dependencies
+├── index.html              # Frontend entry point
+├── package.json            # Frontend dependencies
+├── vite.config.ts          # Vite configuration
 └── README.md
 ```
 
@@ -74,17 +73,12 @@ PropertyIntel/
 
 ### Frontend Setup
 
-1. **Navigate to frontend directory:**
-   ```bash
-   cd frontend
-   ```
-
-2. **Install dependencies:**
+1. **Install dependencies:**
    ```bash
    npm install
    ```
 
-3. **Run development server:**
+2. **Run development server:**
    ```bash
    npm run dev
    ```
