@@ -11,7 +11,7 @@ import PropertyDetailView from "@/views/properties/PropertyDetailView.vue";
 import AnalyticsView from "@/views/AnalyticsView.vue";
 
 const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(),
   routes: [
     {
       path: "/",
