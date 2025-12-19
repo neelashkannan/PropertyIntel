@@ -1,0 +1,166 @@
+
+## The Agentic System for Holistic Property Intelligence
+
+### Core Philosophy:
+
+We’re building a **modular “Portfolio” Agentic System**, where each **Specialist Agent** focuses on a specific domain of insight. These agents feed their insights into a central **Portfolio Manager Agent** (PMA), which produces a final score, comparisons, and recommendations.
+
+---
+
+## Specialist Data Agents (DAs)
+
+### 1. UserAgent
+
+* Already built in UI.
+* Collects user-defined property info: type, size, EPC, council band, features (solar, garden, parking), etc.
+
+---
+
+### 2. FloodAgent (FA)
+
+* Uses merged SEPA surface and river flood geojsons.
+* Performs spatial join with postcode coordinates.
+* Assigns a **flood risk score** per property (considering elevation + water depth).
+* Outputs: `"flood_risk_score": 1 to 5` (or `low/medium/high` → mapped to numeric).
+
+---
+
+### 3. DeprivationAgent (SIMDAgent)
+
+* Uses `simd_2020_edinburgh_only.csv`.
+* Fetches:
+
+  * `SIMD Rank`
+  * `Education`, `Health`, `Crime`, `Access`, `Housing` sub-scores.
+* Outputs: Weighted SIMD impact on property value and quality of life.
+
+---
+
+### 4. SchoolQualityAgent
+
+* Pulls quality score of nearest schools (public APIs or scraped OFSTED-style reports).
+* Based on:
+
+  * Distance from property
+  * Inspection rating or league table
+* Output: `school_quality_score: 1 to 5`
+
+---
+
+### 5. TransitAgent
+
+* Checks proximity to:
+
+  * Bus stops
+  * Train stations
+  * Trams
+* Output: `transit_score`, e.g. 4.5 / 5
+
+---
+
+### 6. GreenSpaceAgent
+
+* Uses open space datasets or NDVI (satellite-based if possible).
+* Outputs: `green_space_pct` around property within 500m.
+
+---
+
+### 7. SentimentAgent
+
+* Pulls historical **local news** and **Twitter/X** mentions of the area.
+* Sentiment model assigns a polarity score.
+* Output: `sentiment_score: -1 to +1`
+
+---
+
+### 8. PlanningAppAgent
+
+* Pulls number and types of **planning applications** around the property.
+* Measures development activity or future growth.
+* Output: `planning_score`, e.g. 3.2 / 5
+
+---
+
+### 9. InsuranceAgent
+
+* Uses flood + crime + house type + EPC to suggest estimated insurance premium.
+* Output: `estimated_insurance_cost`
+
+---
+
+### 10. EconAgent
+* Uses APIs to collect property prices over the years, sold prices of similar properties for the specific postcode
+* Takes current asking price of the property (User input)
+* Deposit and mortgage info (User input) (optional)
+
+## 🔧 Portfolio Manager Agent (PMA)
+
+* Aggregates outputs from all agents.
+* Applies a **weighted scoring system**.
+* Computes:
+
+  * Overall desirability score
+  * Risk-adjusted valuation
+  * Comparison across user-listed properties
+  * Suggestions (e.g., install solar panels, avoid flood zones)
+  * Estimated valuation after suggested renovation- provide informed resell value and potential profit/loss
+  * ......Additional features to be added  
+
+
+The current setup is structured:
+
+* UI captures structured user data.
+* FloodAgent, SIMDAgent, etc., use CSV/GeoJSON and local lookups.
+* It's designed for **accuracy, transparency, and batch-mode robustness**.
+
+So for these "deterministic" agents, RAG is not necessary. We don’t need retrieval+LLM reasoning to answer “What’s the flood risk for this postcode?”
+
+
+### Where RAG/LLM/Embeddings Can Add Power
+
+RAG and LLMs will shine in these parts of the system:
+
+#### 1. SentimentAgent → Yes, RAG + LLM
+
+* **Input**: Raw social media posts, news headlines, Reddit threads.
+* RAG can pull relevant context, and LLM can score polarity/intensity.
+* **LLMs can explain**: “People are worried due to recent flooding nearby.”
+
+#### 2. PlanningAppAgent → Possibly RAG
+
+* Fetch planning documents (PDFs, news, applications).
+* LLMs can summarize: “A major student housing complex is planned 200m away.”
+* Can use RAG with a document store of past planning records.
+
+#### 3. SchoolQualityAgent (Future Upgrade)
+
+* OFSTED or Education Scotland inspection reports are long text.
+* Use LLM summarization + vector search of past inspection findings.
+
+#### 4. User Queries + Explanations via PMA
+
+* When user asks: “Why is this property score lower than the other?” – an LLM is perfect.
+* It can generate 'explanatory narratives' using agent outputs.
+* Option to convert scoring logic + weights into 'natural language reasoning.'
+
+---
+
+### How This Will Look Architecturally
+
+| Agent Type         | Data Source   | Method                      |
+| ------------------ | ------------- | --------------------------- |
+| FloodAgent         | GeoJSON       | Spatial join + rule-based   |
+| SIMDAgent          | CSV           | Lookup + normalization      |
+| SentimentAgent     | News/Twitter  | **RAG + LLM summarization** |
+| PlanningAppAgent   | Planning docs | **RAG + embeddings + LLM**  |
+| SchoolQualityAgent | Text reports  | Possibly **LLM summary**    |
+| PortfolioManager   | Aggregation   | Rule-based + (optional) LLM |
+
+---
+
+### Summary:
+
+* No need for RAG in agents doing spatial or tabular lookups (Flood, SIMD, Econ).
+* Yes to RAG/LLM for agents involving unstructured, open-ended or textual data (Sentiment, Planning, School).
+* LLM involvement grows later** as you add natural language explanations and recommendations.
+
