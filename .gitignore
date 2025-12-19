@@ -13,6 +13,7 @@ dist/
 build/
 .output/
 .nuxt/
+# Note: docs/ is NOT ignored - it's used for GitHub Pages
 
 # IDEs
 .vscode/
